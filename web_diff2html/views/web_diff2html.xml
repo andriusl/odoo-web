@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="diff_assets_common" inherit_id="web.assets_common">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" type="text/css" href="/web_diff2html/static/lib/highlight/github.css"/>
+            <link rel="stylesheet" type="text/css" href="/web_diff2html/static/lib/diff2html/diff2html.css"/>
+            <script type="text/javascript" src="/web_diff2html/static/lib/highlight/highlight.js"/>
+            <script type="text/javascript" src="/web_diff2html/static/lib/highlight/scala.js"/>
+            <script type="text/javascript" src="/web_diff2html/static/lib/diff2html/diff2html.js"/>
+            <script type="text/javascript" src="/web_diff2html/static/lib/diff2html/diff2html-ui.js"/>
+        </xpath>
+    </template>
+    <template id="diff_assets_backend" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/web_diff2html/static/src/js/diff2html.js"/>
+        </xpath>
+    </template>
+</odoo>
