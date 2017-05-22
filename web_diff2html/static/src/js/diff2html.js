@@ -8,14 +8,14 @@ var FieldDiff2Html = FieldTextHtmlSimple.extend({
     render_value: function(){
         this._super();
         // Show in HTML if it is readonly.
-        if (this.get("effective_readonly")) {
+        var value = this.get('value');
+        if (value && this.get("effective_readonly")) {
             // Convert diff to json diff equivalent.
             // We need to use `getJsonFromDiff` function because we need
             // to pass actual value to render it, instead of directly
             // modifying element using ID or class name (as showed in
             // diff2html guide).
-            var value = this.get('value'),
-                diffJson = Diff2Html.getJsonFromDiff(value),
+            var diffJson = Diff2Html.getJsonFromDiff(value),
                 cfg = {"inputFormat": 'json', "showFiles": true},
                 diffHtml = Diff2Html.getPrettyHtml(diffJson, cfg);
                 // Convert string HTML to jQuery.
