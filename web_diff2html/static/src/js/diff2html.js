@@ -1,4 +1,4 @@
-odoo.define('git_integration.diff', function (require) {
+odoo.define('web_diff2html.diff2html', function (require) {
 "use strict";
 var core = require('web.core');
 var editor_backend = require('web_editor.backend')
