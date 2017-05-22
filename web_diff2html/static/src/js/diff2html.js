@@ -1,11 +1,12 @@
 odoo.define('web_diff2html.diff2html', function (require) {
 "use strict";
+/*global Diff2Html, Diff2HtmlUI*/
 var core = require('web.core');
 var editor_backend = require('web_editor.backend')
 var FieldTextHtmlSimple = editor_backend['FieldTextHtmlSimple']
 
 var FieldDiff2Html = FieldTextHtmlSimple.extend({
-    render_value: function(){
+    render_value: function() {
         this._super();
         // Show in HTML if it is readonly.
         var value = this.get('value');
