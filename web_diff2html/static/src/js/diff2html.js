@@ -20,8 +20,10 @@ function toJSON(str) {
 var FieldDiff2Html = FieldTextHtmlSimple.extend({
     render_value: function() {
         this._super();
-        // Show in HTML if it is readonly.
-        var value = this.get('value');
+        // We access value using jQuery, because using Odoo
+        // `this.get('value')` is clunky: it wraps content in `p` tag.
+        var value = this.$content.text();
+        // Show in HTML only if it is readonly.
         if (value && this.get("effective_readonly")) {
             // Convert diff to json diff equivalent.
             // We need to use `getJsonFromDiff` function because we need
@@ -60,7 +62,7 @@ var FieldDiff2Html = FieldTextHtmlSimple.extend({
             _.each($content, function(obj) {
                 result += obj.outerHTML
             });
-            this.$content.html(this.text_to_html(result))
+            this.$content.html(result)
         }
     }
 })
