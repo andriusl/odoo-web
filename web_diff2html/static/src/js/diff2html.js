@@ -18,6 +18,38 @@ function toJSON(str) {
 }
 
 var FieldDiff2Html = FieldTextHtmlSimple.extend({
+    get_config: function() {
+        return toJSON(this.node.attrs['data-diff2html']) || {
+            "options": {"inputFormat": "diff"}, "extra": {
+                "highlightCode": true}};
+    },
+    get_diffjson: function(cfg, value) {
+        if (cfg.options.inputFormat === 'json'){
+            // If it is json, we do not need to convert it.
+            return value;
+        } else {
+            // We need to use `getJsonFromDiff` function because we need
+            // to pass actual value to render it, instead of directly
+            // modifying element using ID or class name (as showed in
+            // diff2html guide).
+            return Diff2Html.getJsonFromDiff(value);
+        }
+    },
+    html_to_jquery: function(html_str) {
+        // Convert string HTML to jQuery.
+        return $($.parseHTML(html_str));
+    },
+    apply_extra: function(extra, $content) {
+        var diff2htmlUi = new Diff2HtmlUI();
+        if (extra.highlightCode){
+            diff2htmlUi.highlightCode($content);
+        }
+        if (extra.fileListCloseable){
+            diff2htmlUi.fileListCloseable($content, false);
+        }
+        // Return this object for easier extendability.
+        return diff2htmlUi;
+    },
     render_value: function() {
         this._super();
         // We access value using jQuery, because using Odoo
@@ -25,40 +57,21 @@ var FieldDiff2Html = FieldTextHtmlSimple.extend({
         var value = this.$content.text();
         // Show in HTML only if it is readonly.
         if (value && this.get("effective_readonly")) {
-            // Convert diff to json diff equivalent.
-            // We need to use `getJsonFromDiff` function because we need
-            // to pass actual value to render it, instead of directly
-            // modifying element using ID or class name (as showed in
-            // diff2html guide).
             // Get config from field definition in view
-            var cfg = toJSON(this.node.attrs['data-diff2html']) || {
-                "options": {"inputFormat": "diff"}, "extra": {
-                    "highlightCode": true}};
-            if (cfg.options.inputFormat !== 'json'){
-                var diffJson = Diff2Html.getJsonFromDiff(value);
-            } else {
-                // If it is json, we do not need to convert it.
-                diffJson = value;
-            }
+            var cfg = this.get_config();
+            // Convert diff to json diff equivalent.
+            var diffJson = this.get_diffjson(cfg, value);
             // Overwrite inputFormat to be jSon, because we will be
             // using jSon from now on.
             cfg.options.inputFormat = 'json'
             var diffHtml = Diff2Html.getPrettyHtml(diffJson, cfg.options),
-            // Convert string HTML to jQuery.
-                $content = $($.parseHTML(diffHtml)),
-                diff2htmlUi = new Diff2HtmlUI();
-            // Highlight code using jQuery object, because string
-            // type would be used to search for element, not use
-            // actual string HTML.
-            if (cfg.extra.highlightCode){
-                diff2htmlUi.highlightCode($content);
-            }
-            if (cfg.extra.fileListCloseable){
-                diff2htmlUi.fileListCloseable($content, false);
-            }
+                // Convert string HTML to jQuery.
+                $content = this.html_to_jquery(diffHtml);
+            // Apply extra options like code highlight.
+            this.apply_extra(cfg.extra, $content);
             // Combine lines summary and actual diff lines. And
             // convert result back to string.
-            var result = ''
+            var result = '';
             _.each($content, function(obj) {
                 result += obj.outerHTML
             });
