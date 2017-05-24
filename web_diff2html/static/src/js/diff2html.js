@@ -1,6 +1,6 @@
 odoo.define('web_diff2html.diff2html', function (require) {
 "use strict";
-/*global Diff2Html, Diff2HtmlUI*/
+/*global Diff2HtmlUI*/
 var core = require('web.core');
 var editor_backend = require('web_editor.backend')
 var FieldTextHtmlSimple = editor_backend['FieldTextHtmlSimple']
@@ -29,29 +29,16 @@ var FieldDiff2Html = FieldTextHtmlSimple.extend({
         return cfg;
 
     },
-    get_diff_json: function(options, value) {
-        if (options.inputFormat === 'json'){
-            // If it is jSon, we do not need to convert it.
-            return value;
-        } else {
-            // We need to use `getJsonFromDiff` function because we need
-            // to pass actual value to render it, instead of directly
-            // modifying element using ID or class name (as showed in
-            // diff2html guide).
-            return Diff2Html.getJsonFromDiff(value);
-        }
-    },
-    html_to_jquery: function(html_str) {
-        // Convert string HTML to jQuery.
-        return $($.parseHTML(html_str));
-    },
-    apply_extra: function(extra, $content) {
+    apply_extra: function(extra, target) {
         var diff2htmlUi = new Diff2HtmlUI();
         if (extra.highlightCode){
-            diff2htmlUi.highlightCode($content);
+            diff2htmlUi.highlightCode(target);
         }
         if (extra.fileListCloseable){
-            diff2htmlUi.fileListCloseable($content, false);
+            // Determine if we need to show files list on default or not.
+            var default_val = extra.fileListCloseableDefault,
+                default_close = default_val ? default_val : false;
+            diff2htmlUi.fileListCloseable(target, default_close);
         }
         // Return this object for easier extendability.
         return diff2htmlUi;
@@ -59,29 +46,17 @@ var FieldDiff2Html = FieldTextHtmlSimple.extend({
     render_value: function() {
         this._super();
         // We access value using jQuery, because using Odoo
-        // `this.get('value')` is clunky: it wraps content in `p` tag.
+        // `this.get('value')` is clunky for diff2html: it wraps content
+        // in `p` tag.
         var value = this.$content.text();
         // Show in HTML only if it is readonly.
         if (value && this.get("effective_readonly")) {
             // Get config from field definition in view
-            var cfg = this.get_config();
-            // Convert diff to json diff equivalent.
-            var diffJson = this.get_diff_json(cfg.options, value);
-            // Overwrite inputFormat to be jSon, because we will be
-            // using jSon from now on.
-            cfg.options.inputFormat = 'json'
-            var diffHtml = Diff2Html.getPrettyHtml(diffJson, cfg.options),
-                // Convert string HTML to jQuery.
-                $content = this.html_to_jquery(diffHtml);
-            // Apply extra options like code highlight.
-            this.apply_extra(cfg.extra, $content);
-            // Combine lines summary and actual diff lines. And
-            // convert result back to string.
-            var result = '';
-            _.each($content, function(obj) {
-                result += obj.outerHTML
-            });
-            this.$content.html(result)
+            var cfg = this.get_config(),
+                diff2htmlUi = new Diff2HtmlUI({diff: value});
+            diff2htmlUi.draw(this.$content, cfg.options);
+            // Apply extra config options
+            this.apply_extra(cfg.extra, this.$content)
         }
     }
 })
