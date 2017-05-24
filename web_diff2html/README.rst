@@ -13,7 +13,7 @@ This module uses `diff2html`_ as a base library to generate HTML diff.
 
 *This a sample diff2html implementation in Odoo using this widget:*
 
-.. image:: web_diff2html/static/description/img/diff1.png
+.. image:: ../web_diff2html/static/description/img/diff1.png
     :height: 500px
     :align: right
     :alt: Diff to HTML sample
