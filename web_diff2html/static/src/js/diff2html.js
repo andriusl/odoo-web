@@ -19,13 +19,19 @@ function toJSON(str) {
 
 var FieldDiff2Html = FieldTextHtmlSimple.extend({
     get_config: function() {
-        return toJSON(this.node.attrs['data-diff2html']) || {
-            "options": {"inputFormat": "diff"}, "extra": {
-                "highlightCode": true}};
+        var cfg = toJSON(this.node.attrs['data-diff2html']) || {};
+        // Add default objects for options and/or extra if they are were
+        // not specified from XML.
+        if (!cfg.options)
+            cfg.options = {"inputFormat": "diff"}
+        if (!cfg.extra)
+            cfg.extra = {"highlightCode": true}
+        return cfg;
+
     },
-    get_diffjson: function(cfg, value) {
-        if (cfg.options.inputFormat === 'json'){
-            // If it is json, we do not need to convert it.
+    get_diff_json: function(options, value) {
+        if (options.inputFormat === 'json'){
+            // If it is jSon, we do not need to convert it.
             return value;
         } else {
             // We need to use `getJsonFromDiff` function because we need
@@ -60,7 +66,7 @@ var FieldDiff2Html = FieldTextHtmlSimple.extend({
             // Get config from field definition in view
             var cfg = this.get_config();
             // Convert diff to json diff equivalent.
-            var diffJson = this.get_diffjson(cfg, value);
+            var diffJson = this.get_diff_json(cfg.options, value);
             // Overwrite inputFormat to be jSon, because we will be
             // using jSon from now on.
             cfg.options.inputFormat = 'json'
