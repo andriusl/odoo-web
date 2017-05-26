@@ -22,7 +22,7 @@ Usage:
 
 *This a sample diff2html implementation in Odoo using this widget:*
 
-.. image:: ../web_diff2html/static/description/img/diff1.png
+.. image:: static/description/img/diff1.png
     :height: 500px
     :align: right
     :alt: Diff to HTML sample
