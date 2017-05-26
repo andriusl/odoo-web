@@ -3,7 +3,7 @@
 # See LICENSE file for full copyright and licensing details.
 {
     'name': "Diff To HTML",
-    'version': '1.0.1',
+    'version': '1.1.0',
     'category': 'Web',
     'summary': 'web, widget, diff, html',
     'author': "Andrius Laukavičius",
