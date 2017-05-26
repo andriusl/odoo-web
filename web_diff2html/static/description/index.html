@@ -1,0 +1,29 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   </head>
+   <body>
+      <h1 id="diff-to-html">Diff To HTML</h1>
+      <p>Converts diff output of a field value to prettified HTML. (e.g. as seen on github, bitbucket etc.).</p>
+      <p>This module uses <a href="https://github.com/rtfpessoa/diff2html">diff2html</a> as a base library to generate HTML diff.</p>
+      <p>Usage:</p>
+      <ul>
+         <li>Field must be of HTML type.</li>
+         <li>Set widget="diff2html" on field where it is defined in a form view.</li>
+         <li>You can provide optional configuration from XML view (on field). For example:</li>
+      </ul>
+      <pre class="sourceCode "><code>&lt;field name="diff"
+    widget="diff2html" data-diff2html="{'options': {'inputFormat': 'diff', 'showFiles': true}, 'extra': {'highlightCode': true, 'fileListCloseable': true, 'fileListCloseableDefault': true}}"/&gt;</code></pre>
+      <ul>
+         <li>There are two config parts: options and extra. For all options and what they do, look <a href="https://github.com/rtfpessoa/diff2html#configuration">here</a>. For extra part, there are currently two implementations: highlightCode and fileListCloseable (with optional key fileListCloseableDefault to specify if files are hidden or showed on default.). If you need some additional effect on HTML output that diff2html library provides, then you need to extend function apply_extra.</li>
+      </ul>
+      <p><em>This a sample diff2html implementation in Odoo using this widget:</em></p>
+      <p>
+         <image src="img/diff1.png" alt="Diff Sample" height="500px"/>
+      </p>
+      <h2 id="contributors">Contributors</h2>
+      <ul>
+         <li>Andrius Laukavičius</li>
+      </ul>
+   </body>
+</html>
